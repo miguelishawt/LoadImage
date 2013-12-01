@@ -48,7 +48,7 @@ namespace util
         if (!(ptr && w && h))
         {
             // Error, failed to load the image
-            std::cerr << "Failed to load image \"" << path << "\". Reason : " << stbi_failure_reason();
+            LI_LOG_ERROR << "Failed to load image \"" << path << "\". Reason : " << stbi_failure_reason();
             return imageData;
         }
         
