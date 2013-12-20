@@ -28,18 +28,22 @@
 
 #include "LoadImage.hpp"
 
-#include <stb_image/stb_image.h>
+#include <sstream>
 
-#include <iostream>
-#define LI_LOG_ERROR std::cerr
+#include <stb_image/stb_image.h>
 
 namespace util
 {
     // TODO:
     // Support different types of channels? lel
     // Look at GIMP source code for image loading perhaps, hah.
-    ImageData loadImage(const std::string& path)
+    ImageData loadImage(const std::string& path, ErrorCode* error)
     {
+        if(error)
+        {
+            *error = ErrorCode::NO_ERROR;
+        }
+        
         // Load the image and get a pointer to the pixels in memory
         ImageData imageData;
         int w = 0, h = 0, channels = 0;
@@ -48,7 +52,7 @@ namespace util
         if (!(ptr && w && h))
         {
             // Error, failed to load the image
-            LI_LOG_ERROR << "Failed to load image \"" << path << "\". Reason : " << stbi_failure_reason();
+            if(error) *error = ErrorCode::FAILED_TO_LOAD_IMAGE_FROM_FILE;
             return imageData;
         }
         
@@ -62,7 +66,7 @@ namespace util
         return imageData;
     }
     
-    ImageData loadImage(const void* data, std::size_t dataSize)
+    ImageData loadImage(const void* data, std::size_t dataSize, ErrorCode* error)
     {
         ImageData imageData;
         
@@ -86,16 +90,36 @@ namespace util
             else
             {
                 // Error, failed to load the image
-                LI_LOG_ERROR << "Failed to load image from memory. Reason : " << stbi_failure_reason();
+                if(error) *error = ErrorCode::FAILED_TO_LOAD_IMAGE_FROM_MEMORY;
             }
         }
         else
         {
-            LI_LOG_ERROR << "Failed to load image from memory, no data provided";
+            if(error) *error = ErrorCode::NO_DATA_PROVIDED;
         }
         
         return imageData;
     }
-}
 
-#undef LI_LOG_ERROR
+    std::string errorCodeToString(const ErrorCode& errorCode)
+    {
+        std::ostringstream temp;
+        switch(errorCode)
+        {
+            case ErrorCode::NO_ERROR:
+                temp << "No error";
+            case ErrorCode::FAILED_TO_LOAD_IMAGE_FROM_FILE:
+                temp << "Failed to load image from file. Reason: " << stbi_failure_reason();
+                break;
+            case ErrorCode::FAILED_TO_LOAD_IMAGE_FROM_MEMORY:
+                temp << "Failed to load image from memory. Reason: " << stbi_failure_reason();
+                break;
+            case ErrorCode::NO_DATA_PROVIDED:
+                temp << "Failed to load image from memory. Reason: no data provided.";
+                break;
+            default:
+                break;
+        }
+        return temp.str();
+    }
+}

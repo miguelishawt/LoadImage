@@ -5,10 +5,15 @@ Contains simple functions to load images. It is just a header/source file, so ju
 # Usage
 
 ```c++
-ImageData data{util::loadImage("cheese.png")};
+ErrorCode error;
+
+ImageData data{util::loadImage("cheese.png", &error)};
+
 if(!data.pixels)
 {
     std::cerr << "Failed to load image\n";
+    std::cerr << "Reason:\n";
+    std::cerr << util::errorCodeToString(error) << '\n';
 }
 
 // ... do something with the image
@@ -20,7 +25,11 @@ This library requires stb_image, which is located within the `extlibs` directory
 
 # NOTES
 
-This library has taken some source code from the SFML library, however, I have altered it a little bit. Returning the image data is one major difference, as it seems more natural to do so (plus the fact that C++11 supports moving now more than ever). Also, `std::unique_ptr` is used, that way memory is managed for you, but you can take over managament by a call to `release()`.
+This library has taken some source code from the SFML library, however, I have altered it a little bit. Here are the differences:
+
+1. SFML copies the data returned from `stb_image`, and stores it within a `vector`. I simply "move" the data, with the use of a `unique_ptr` (I basically copy the pointer to the data that `stb_image` returns).
+2. I return the image data, instead of allowing it to be passed by reference. As it is a more C++11 approach.
+3. Since `std::unique_ptr` is used, memory is managed for you, but if you want to transfer ownership (that is, you want to manage the memory), then you can simply call `release()`. Thus the RAII pattern is used to it's fullest.
 
 # License
 Copyright (C) 2013 Miguel Martin (miguel.martin7.5@hotmail.com)

@@ -35,24 +35,44 @@
 
 namespace util
 {
+    /// \brief A data structure that describes information present within an image
+    ///
+    /// \author Miguel Martin
     struct ImageData
     {
         std::unique_ptr<std::uint8_t[]> pixels;
         unsigned int width;
         unsigned int height;
+        
+        explicit operator bool() const
+        { return pixels.get() != nullptr; }
     };
-    
+   
+    /// \brief An enumeration that describes an error code
+    enum class ErrorCode
+    {
+        NO_ERROR = 0,
+        FAILED_TO_LOAD_IMAGE_FROM_FILE,
+        FAILED_TO_LOAD_IMAGE_FROM_MEMORY,
+        NO_DATA_PROVIDED
+    };
+
     /// Loads image data into memory
     /// \param path The path to the image
+    /// \param errorCode An optional error code, to determine how the function fails (if it does)
     /// \return The image data loaded from the file.
-    /// \note If this method fails, the pixels of the image a nullptr
-    ImageData loadImage(const std::string& path);
+    /// \note If this method fails, the pixels of the image will be a nullptr
+    ImageData loadImage(const std::string& path, ErrorCode* errorCode = nullptr);
     
     /// Loads image data into memory
     /// \param data The data of the image
     /// \param dataSize The size of the data
-    /// \note If this method fails, the pixels of the image a nullptr
-    ImageData loadImage(const void* data, std::size_t dataSize);
+    /// \param errorCode An optional error code, to determine how the function fails (if it does)
+    /// \note If this method fails, the pixels of the image will be a nullptr
+    ImageData loadImage(const void* data, std::size_t dataSize, ErrorCode* errorCode = nullptr);
+
+    /// Converts an error code to a string
+    std::string errorCodeToString(const ErrorCode& errorCode);
 }
 
 #endif // __UTIL_LOADIMAGE_HPP__
