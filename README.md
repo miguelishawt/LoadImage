@@ -33,4 +33,4 @@ This library has taken some source code from the SFML library, however, I have a
 
 # License
 
-See [[LICENSE]]
+See [LICENSE](LICENSE)
