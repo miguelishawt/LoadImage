@@ -9,7 +9,7 @@ li::error error;
 
 li::image_data data{li::load("cheese.png", &error)};
 
-if(!data.pixels)
+if(!data)
 {
     std::cerr << "Failed to load image\n";
     std::cerr << "Reason:\n";
@@ -21,7 +21,7 @@ if(!data.pixels)
 
 # Dependencies
 
-This library requires stb_image, which is located within the `extlibs` directory.
+This library requires [stb_image](https://github.com/nothings/stb).
 
 # NOTES
 
