@@ -30,7 +30,7 @@
 
 #include <stb_image.h>
 
-namespace util
+namespace li
 {
     // TODO:
     // Support different types of channels? lel
