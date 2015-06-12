@@ -30,6 +30,7 @@
 #define LI_LOADIMAGE_HPP
 
 #include <memory>
+#include <ostream>
 #include <string>
 #include <cstdint>
 
